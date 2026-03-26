@@ -29,9 +29,9 @@ int estaVivo(Personagem p)
 
 void inicializarHeroi(Personagem *heroi, char nome[])
 {
-
     printf("Digite o nome do seu heroi: ");
-    scanf("%s",heroi->nome);
+    scanf(" %[^\n]", heroi->nome);
+
 
     heroi->hp = 100;
     heroi->ataque = 20;
@@ -39,7 +39,7 @@ void inicializarHeroi(Personagem *heroi, char nome[])
     heroi->vivo = 1;
     heroi->nivel = 1;
     heroi->stamina = 0;
-    printf("\nNOME: %s\nATAQUE: %.2lf\nDEFESA: %.2lf\nNIVEL: %d\nSTAMINA: %d\n",heroi->nome,heroi->ataque,heroi->defesa,heroi->nivel,heroi->stamina);
+    printf("\nNOME: %s\nATAQUE: %.2lf\nDEFESA: %.2lf\nNIVEL: %d\nSTAMINA: %d\n",heroi->nome,heroi->ataque * 2,heroi->defesa,heroi->nivel,heroi->stamina);
 
 }
 void inicializarInimigos(Personagem inimigos[], int quantidade)
@@ -77,7 +77,7 @@ void batalhar(Personagem *heroi, Personagem *inimigo, int numero)
 
     do
     {
-        printf("\n1 = Defender\n2 = Ataque (toma o dobro de dano inimigo na rodada, ataca com o dobro de dano e quebra a defesa inimiga)\n3 = Curar (recupera 15 HP, so pode usar 2 vezes)\nResposta: ");
+        printf("\n1 = Defender\n2 = Ataque (toma o dobro de dano inimigo na rodada mas quebra a defesa inimiga)\n3 = Curar (recupera 15 HP, so pode usar 2 vezes)\nResposta: ");
         scanf("%d", &escolha);
         switch(escolha)
         {
@@ -97,7 +97,6 @@ void batalhar(Personagem *heroi, Personagem *inimigo, int numero)
                     danoHeroi = calcularDano(heroi->ataque * 2, 0);
                     inimigo->hp -= danoHeroi;
                     heroi->stamina--;
-                    printf("\nSEU ATAQUE DOBROU DE %.2lf PARA %.2lf\n", heroi->ataque, danoHeroi);
 
                 }
                 else
@@ -127,7 +126,7 @@ void batalhar(Personagem *heroi, Personagem *inimigo, int numero)
             }
             else
             {
-                printf("\nACABOU AS SUAS CURAS");
+                printf("\nACABOU AS SUAS CURAS\n");
                 danoInimigo = calcularDano(inimigo->ataque, heroi->defesa);
                 heroi->hp -= danoInimigo;
             }
@@ -170,10 +169,11 @@ int main()
     Personagem inimigo[3];
     Personagem heroi;
     int i, tutorial;
+    char resto[60];
 
     do
     {
-        printf("Deseja ler o tutorial curto antes de começar?\n1- sim\n2 - nao\n resposta: ");
+        printf("Deseja ler o tutorial curto antes de começar?\n1- sim\nqualquer outra tecla - nao\n resposta: ");
         scanf("%d", &tutorial);
 
     switch(tutorial){
@@ -181,13 +181,14 @@ int main()
         printf("\nBEM VINDO A ARENA DE BATALHA, SEU OBJETIVO EH PASSAR POR 3 INIMIGOS SEM MORRER, SERA QUE SEU HEROI SAIRA VIVO DESSA?\n");
         printf("A STAMINA EH NECESSARIA PARA ATACAR, SEM STAMINA VC ERRA SEU ATAQUE E RECEBE DANO. ALEM DISSO ELA EH ACUMULATIVA DURANTE TODOS OS ROUNDS E SO EH OBTIDA ATRAVES DA OPCAO DE DEFESA\n");
         break;
-    case 2:
-        break;
     default:
-        printf("\nopcao invalida\n");
+        tutorial = 2;
+        gets(resto);
         break;
     }
     }while(tutorial != 1 && tutorial != 2);
+
+    system("cls");
 
     inicializarHeroi(&heroi, heroi.nome);
     inicializarInimigos(&inimigo[0], 3);
@@ -203,7 +204,7 @@ int main()
             {
                 aumentarNivel(&heroi);
                 printf("\n--- VOCE SUBIU DE NIVEL ---");
-                printf("\nATAQUE ATUAL: %.2lf", heroi.ataque);
+                printf("\nATAQUE ATUAL: %.2lf", heroi.ataque * 2);
                 printf("\nDEFESA ATUAL: %.2lf\n", heroi.defesa);
             }
             else if(estaVivo(heroi) && i == 2)
